@@ -1,0 +1,60 @@
+{
+  "name": "mongodb-search-builder",
+  "version": "1.0.0",
+  "description": "Build Search Query for MongoDB using mongoose",
+  "main": "dist/index.js",
+  "author": {
+    "email": "minhducck@gmail.com",
+    "name": "Ta Minh DUC",
+    "url": "https://duckonemorec.me/"
+  },
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:minhducck/search-query-builder.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/lodash": "^4.14.184",
+    "@types/mongoose": "^5.11.97",
+    "@types/node": "^14.11.2",
+    "gts": "^3.1.0",
+    "jest": "^27.2.5",
+    "ts-jest": "^27.0.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.0.3"
+  },
+  "scripts": {
+    "start:dev": "ts-node src/index.ts",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "build": "tsc",
+    "fix": "gts fix",
+    "prepare": "echo 'Prepare Stage'",
+    "pretest": "echo 'Prepare Test Stage'",
+    "posttest": "echo 'Post Test Stage'",
+    "test": "jest"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "mongodb": "^4.9.0",
+    "mongoose": "^6.5.3"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "ts"
+    ],
+    "rootDir": "./",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  }
+}
