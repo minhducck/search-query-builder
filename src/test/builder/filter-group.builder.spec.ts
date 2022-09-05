@@ -1,4 +1,4 @@
-import {filterGroupBuilder} from "../../src";
+import {filterGroupBuilder} from "../../";
 
 describe('Filter Group Builder Test', () => {
   describe('root', () => {

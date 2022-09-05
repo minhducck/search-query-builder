@@ -1,4 +1,4 @@
-import {CalculatePageOffset} from "../../src";
+import {CalculatePageOffset} from "../../";
 
 describe('Calculate page offset', () => {
   describe('root', () => {

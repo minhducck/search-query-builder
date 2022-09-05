@@ -18,7 +18,7 @@ export type ElementOperator = typeof elementOperations[number];
 const logicalOperations = ['$and', '$or', '$nor', '$not'];
 export type LogicalOperator = typeof logicalOperations[number];
 
-const evaluationOperations = ['$expr', '$regex', '$text', '$where'];
+const evaluationOperations = ['$expr', '$regex', '$text', '$where', '$jsonSchema'];
 export type EvaluationOperator = typeof evaluationOperations[number];
 
 const operationTypes = [
@@ -40,6 +40,7 @@ const operationTypes = [
   '$regex',
   '$text',
   '$where',
+  '$jsonSchema'
 ] as const;
 export type FilterOperationType = typeof operationTypes[number];
 

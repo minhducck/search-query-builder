@@ -5,15 +5,14 @@ import {
   isLogicalOperation,
 } from '../../types';
 
+const nonRequiredFieldOp = ['$and', '$or', '$nor', '$not', '$expr', '$jsonSchema', '$text', '$where'];
+
 export const validateFilterDeclaration = (
   filterDeclaration: FilterType<FilterOperationType>
 ) => {
   // require value
-  if (
-    !isLogicalOperation(filterDeclaration.operation) &&
-    (filterDeclaration?.value === undefined)
-  ) {
-    throw new Error('Value must be present for your comparison.');
+  if (!nonRequiredFieldOp.includes(filterDeclaration.operation) && !filterDeclaration.field) {
+    throw new Error('The field must present for comparison.');
   }
 
   if (

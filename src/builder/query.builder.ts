@@ -1,6 +1,6 @@
 import {Model, PipelineStage} from 'mongoose';
 import {DEFAULT_PAGE_SIZE, Pagination, SortingType} from '../types';
-import {CalculatePageOffset} from '../helper/calculate-page-offset';
+import {CalculatePageOffset} from '../helper';
 
 export const queryBuilder = (
   dbModel: Model<any>,
@@ -14,10 +14,11 @@ export const queryBuilder = (
   // Append lookup to aggregation pipeline.
   aggregation.match(filter);
 
-  subAggregationPipeLine = subAggregationPipeLine || aggregationPipeLine;
-  subAggregationPipeLine.concat({$sort: sorting});
-  subAggregationPipeLine.concat({$skip: CalculatePageOffset(pagination)});
-  subAggregationPipeLine.concat({$limit: pagination.pageSize});
+  // @ts-ignore
+  subAggregationPipeLine = [...aggregationPipeLine, ...subAggregationPipeLine];
+  subAggregationPipeLine.push({$sort: sorting});
+  subAggregationPipeLine.push({$skip: CalculatePageOffset(pagination)});
+  pagination.pageSize > 0 && subAggregationPipeLine.push({$limit: pagination.pageSize});
 
   const facetObject: PipelineStage.Facet['$facet'] = {
     searchResult: subAggregationPipeLine,

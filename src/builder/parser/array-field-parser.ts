@@ -3,23 +3,23 @@ import {
   SimpleComparisonOperator,
   FilterType,
 } from '../../types';
+import * as _ from 'lodash'
 import simpleFilterParser from './simple-filter-parser';
-import {validateRequireFilterField} from '../validator';
 
 export const arrayFilterParser = (
-  filterDeclaration: FilterType<ArrayComparisonOperator>
+  filterDeclaration: FilterType<ArrayComparisonOperator>,
+  requireValidateField = true
 ) => {
-  validateRequireFilterField(
-    filterDeclaration as FilterType<ArrayComparisonOperator>
-  );
+  filterDeclaration.value = filterDeclaration.value.filter(
+    (subExpression:any) => !isNaN(subExpression) || !_.isEmpty(subExpression)
+  )
 
-  if (filterDeclaration?.value?.constructor?.name !== 'Array') {
-    throw new Error(
-      `The value for ${filterDeclaration.field} must be an array`
-    );
+  if (filterDeclaration.value.length === 0) {
+    return {}
   }
 
   return simpleFilterParser(
-    filterDeclaration as FilterType<SimpleComparisonOperator>
+    filterDeclaration as FilterType<SimpleComparisonOperator>,
+    requireValidateField
   );
 };

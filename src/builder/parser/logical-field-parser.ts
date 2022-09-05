@@ -4,17 +4,12 @@ import {
   LogicalOperator,
   SimpleComparisonOperator,
 } from '../../types';
+import {arrayFilterParser} from "./array-field-parser";
 
 export const logicalFilterParser = (
   filterDeclaration: FilterType<LogicalOperator>
 ) => {
-  if (filterDeclaration?.value?.constructor.name !== 'Array') {
-    throw new Error(
-      `The value for ${filterDeclaration.field} must be an array`
-    );
-  }
-
-  return simpleFilterParser(
+  return arrayFilterParser(
     filterDeclaration as FilterType<SimpleComparisonOperator>,
     false
   );
