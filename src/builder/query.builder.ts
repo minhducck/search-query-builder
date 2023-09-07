@@ -10,36 +10,39 @@ export const queryBuilder = (
   aggregationPipeLine: PipelineStage[] = [],
   subAggregationPipeLine: PipelineStage.FacetPipelineStage[] = []
 ) => {
-  const aggregation = dbModel.aggregate(aggregationPipeLine);
-  // Append lookup to aggregation pipeline.
-  aggregation.match(filter);
+  const aggregation: PipelineStage[] = [];
 
-  // @ts-ignore
-  subAggregationPipeLine = [...aggregationPipeLine, ...subAggregationPipeLine];
-  subAggregationPipeLine.push({$sort: sorting});
-  subAggregationPipeLine.push({$skip: CalculatePageOffset(pagination)});
-  pagination.pageSize > 0 && subAggregationPipeLine.push({$limit: pagination.pageSize});
+  aggregation.push({ $match: filter });
+  aggregation.push({ $sort: sorting });
+  aggregation.push(...aggregationPipeLine);
+  aggregation.push(...subAggregationPipeLine);
 
-  const facetObject: PipelineStage.Facet['$facet'] = {
-    searchResult: subAggregationPipeLine,
-    totalCollectionSize: [{$count: 'value'}],
-  };
+  aggregation.push({ $skip: CalculatePageOffset(pagination) });
+  pagination.pageSize > 0 && aggregation.push({ $limit: pagination.pageSize });
 
-  aggregation
-    .facet(facetObject)
-    .project({
-      searchResult: '$searchResult',
-      totalCollectionSize: {
-        $first: '$totalCollectionSize',
+  return dbModel.aggregate([
+    {
+      $facet: {
+        totalCollectionSize: [{ $count: 'value' }],
+        searchResult: aggregation as any,
       },
-      totalCountForThisPage: {
-        $size: '$searchResult',
+    },
+    {
+      $project: {
+        searchResult: '$searchResult',
+        totalCollectionSize: {
+          $first: '$totalCollectionSize',
+        },
+        totalCountForThisPage: {
+          $size: '$searchResult',
+        },
       },
-    })
-    .addFields({
-      totalCollectionSize: '$totalCollectionSize.value',
-      totalCountForThisPage: '$totalCountForThisPage',
-    });
-
-  return aggregation;
+    },
+    {
+      $addFields: {
+        totalCollectionSize: '$totalCollectionSize.value',
+        totalCountForThisPage: '$totalCountForThisPage',
+      },
+    },
+  ]);
 };
