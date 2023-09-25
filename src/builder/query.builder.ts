@@ -17,7 +17,7 @@ export const queryBuilder = async (
   aggregation.push(...subAggregationPipeLine);
   aggregation.push({ $skip: CalculatePageOffset(pagination) });
   pagination.pageSize > 0 && aggregation.push({ $limit: pagination.pageSize });
-
+  aggregation.push({ $sort: sorting });
   const total = dbModel.aggregate([
     {
       $match: filter,
@@ -54,7 +54,10 @@ export const queryBuilder = async (
             totalCollectionSize: sum,
           },
         },
-      ])
+      ],
+      {
+        allowDiskUse: true
+      })
       .exec()
   ).pop();
 };
