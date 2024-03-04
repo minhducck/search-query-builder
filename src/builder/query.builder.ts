@@ -11,12 +11,12 @@ export const queryBuilder = async (
   subAggregationPipeLine: PipelineStage.FacetPipelineStage[] = []
 ) => {
   const aggregation: PipelineStage[] = [];
-  aggregation.push({ $match: filter });
-  aggregation.push({ $sort: sorting });
+  aggregation.push({$match: filter});
+  aggregation.push({$sort: sorting});
   aggregation.push(...aggregationPipeLine);
   aggregation.push(...subAggregationPipeLine);
-  aggregation.push({ $skip: CalculatePageOffset(pagination) });
-  pagination.pageSize > 0 && aggregation.push({ $limit: pagination.pageSize });
+  aggregation.push({$skip: CalculatePageOffset(pagination)});
+  pagination.pageSize > 0 && aggregation.push({$limit: pagination.pageSize});
 
   const total = dbModel.aggregate([
     {
@@ -25,7 +25,7 @@ export const queryBuilder = async (
     {
       $group: {
         _id: null,
-        sum: { $sum: 1 },
+        sum: {$sum: 1},
       },
     },
   ]);
@@ -35,26 +35,29 @@ export const queryBuilder = async (
   return (
     await dbModel
       .aggregate([
-        {
-          $facet: {
-            searchResult: aggregation as any,
-          },
-        },
-        {
-          $project: {
-            searchResult: '$searchResult',
-            totalCountForThisPage: {
-              $size: '$searchResult',
+          {
+            $facet: {
+              searchResult: aggregation as any,
             },
           },
-        },
-        {
-          $addFields: {
-            totalCountForThisPage: '$totalCountForThisPage',
-            totalCollectionSize: sum,
+          {
+            $project: {
+              searchResult: '$searchResult',
+              totalCountForThisPage: {
+                $size: '$searchResult',
+              },
+            },
           },
-        },
-      ])
+          {
+            $addFields: {
+              totalCountForThisPage: '$totalCountForThisPage',
+              totalCollectionSize: sum,
+            },
+          },
+        ],
+        {
+          allowDiskUse: true
+        })
       .exec()
   ).pop();
 };

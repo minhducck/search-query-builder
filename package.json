@@ -1,6 +1,6 @@
 {
   "name": "mongodb-search-builder",
-  "version": "1.0.1-3",
+  "version": "1.0.2",
   "description": "Build Search Query for MongoDB using mongoose",
   "main": "build/index.js",
   "author": {
